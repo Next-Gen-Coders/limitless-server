@@ -308,6 +308,82 @@ The API includes LangChain.js integration with OpenAI for intelligent message re
      - "How much MATIC would I get for 100 USDC on Polygon?"
      - "Compare swap rates for 1 BNB to USDT on BSC"
 
+2. **Token Information Tool** (`get_token_info`):
+
+   - Get detailed information about any token including address, symbol, name, decimals
+   - Works across all supported blockchains
+   - Supports both token symbols and contract addresses
+   - Example queries:
+     - "What is the contract address for USDC on Ethereum?"
+     - "Get information about token 0x..."
+     - "Show me details for MATIC token"
+
+3. **Token Prices Tool** (`token_prices`):
+
+   - **Real-time Prices**: Get current market prices for any token
+   - **Bulk Queries**: Get prices for multiple tokens simultaneously
+   - **Supported Currencies**: Check available currencies for price data
+   - Supports: Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, and more
+   - Currently supports USD pricing
+   - Example queries:
+     - "What's the current price of ETH and USDC?"
+     - "Get prices for BTC, ETH, and MATIC on Polygon"
+     - "What currencies are supported for price queries on Ethereum?"
+
+4. **Gas Prices Tool** (`gas_prices`):
+
+   - **Real-time Gas Prices**: Get current EIP-1559 gas prices with priority levels
+   - **Cost Estimates**: Calculate transaction costs for different operation types
+   - **Priority Levels**: Low, Medium, High, and Instant priority options
+   - **Multi-chain Support**: Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, and more
+   - **Transaction Types**: Simple transfers, token transfers, and DeFi operations
+   - Example queries:
+     - "What are the current gas prices on Ethereum?"
+     - "Show me gas prices with cost estimates for Polygon"
+     - "Get gas prices for Arbitrum with ETH at $3400"
+     - "What's the cost to do a DeFi transaction on Ethereum right now?"
+
+5. **Token Balances Tool** (`token_balances`):
+
+   - **All Token Balances**: Get complete token portfolio for any wallet address
+   - **Custom Token Balances**: Check specific token balances for a wallet
+   - **Multiple Wallets Analysis**: Compare token holdings across multiple wallets
+   - **Smart Filtering**: Automatically filters out zero balances for cleaner results
+   - **Multi-chain Support**: Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, and more
+   - **Token Recognition**: Automatically identifies common tokens by symbol
+   - Example queries:
+     - "Show me all token balances for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
+     - "Get USDC and USDT balances for wallet 0x... on Ethereum"
+     - "Compare ETH balances across these wallets: 0x..., 0x..., 0x..."
+     - "What tokens does this wallet hold on Polygon with non-zero balances?"
+
+6. **Transaction History Tool** (`transaction_history`):
+
+   - **Complete History**: Get comprehensive transaction history for any wallet
+   - **Advanced Search**: Search with multiple filter options (time, chains, transaction types)
+   - **Swap History**: Dedicated swap transaction analysis
+   - **Multi-chain Support**: Track transactions across all supported blockchains
+   - **Transaction Details**: Includes gas fees, token actions, metadata, and 1inch-specific info
+   - **Smart Formatting**: Displays recent events with relevant context and summaries
+   - Example queries:
+     - "Show me recent transaction history for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
+     - "Get all swap transactions on Ethereum for this wallet"
+     - "Search for transactions involving USDC in the last 30 days"
+     - "Show me all 1inch Fusion swaps for this address"
+     - "What transactions happened on Polygon between timestamps X and Y?"
+
+7. **NFT Operations Tool** (`nft_operations`):
+
+   - **Supported Chains**: Get list of supported chains for NFT operations
+   - **NFT Collections**: Retrieve all NFTs owned by a wallet address
+   - **NFT Details**: Get detailed information about specific NFTs
+   - Supports: Ethereum, Polygon, Arbitrum, Avalanche, Gnosis, Klaytn, Optimism, Base
+   - Providers: OpenSea, Rarible, POAP
+   - Example queries:
+     - "What chains support NFT operations?"
+     - "Show me all NFTs owned by address 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
+     - "Get details for NFT token ID 1234 on contract 0x... on Ethereum using OpenSea"
+
 ### Environment Variables Required
 
 ```env
@@ -323,25 +399,132 @@ ONEINCH_API_KEY=your_1inch_api_key_here
 ### curl Examples for AI Features
 
 ```bash
-# Create message with automatic AI response (requires auth)
-curl -X POST http://localhost:3000/user/messages \
-  -H "Authorization: Bearer <your_privy_token>" \
+# DeFi swap quote (using test endpoint)
+curl -X POST http://localhost:3000/ai/test \
   -H "Content-Type: application/json" \
   -d '{
-    "content": "Get a quote to swap 1 ETH for USDC on Ethereum with 0.5% slippage",
-    "chatId": "chat-uuid",
-    "role": "user"
+    "message": "Get a quote to swap 1 ETH for USDC on Ethereum with 0.5% slippage from wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
   }'
 
-# Example DeFi query
+# Token prices
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What are the current prices of ETH, USDC, and BTC on Ethereum?"
+  }'
+
+# Multiple chain price comparison
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Get MATIC price on Polygon and ETH price on Ethereum"
+  }'
+
+# Supported currencies
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What currencies are supported for price queries on Ethereum?"
+  }'
+
+# Token information
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What is the contract address and decimals for USDC on Polygon?"
+  }'
+
+# Gas prices
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What are the current gas prices on Ethereum?"
+  }'
+
+# Gas prices with cost estimates
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Show me gas prices with cost estimates for Polygon assuming ETH is at $3400"
+  }'
+
+# Multi-chain gas comparison
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Compare gas prices between Ethereum and Arbitrum"
+  }'
+
+# Token balances - all tokens
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Show me all token balances for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79 on Ethereum"
+  }'
+
+# Token balances - specific tokens
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Get USDC and USDT balances for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
+  }'
+
+# Token balances - multiple wallets
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Compare USDC balances for these wallets: 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79, 0x8ba1f109551bD432803012645Hac136c"
+  }'
+
+# Transaction history - recent events
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Show me recent transaction history for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
+  }'
+
+# Transaction history - swap events only
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Get all swap transactions on Ethereum for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
+  }'
+
+# Transaction history - filtered search
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Search for USDC transactions on Ethereum for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79 in the last 7 days"
+  }'
+
+# NFT operations
+curl -X POST http://localhost:3000/ai/test \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Show me all NFTs owned by 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79 on Ethereum"
+  }'
+
+# Using authenticated endpoints
 curl -X POST http://localhost:3000/user/messages \
   -H "Authorization: Bearer <your_privy_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "content": "What would be the best rate to swap 100 USDC for DAI?",
+    "content": "Get current prices for ETH and USDC, then show me swap rate between them",
     "chatId": "chat-uuid",
     "role": "user"
   }'
 ```
 
+curl -X POST http://localhost:3000/user/messages \
+ -H "Authorization: Bearer <your_privy_token>" \
+ -H "Content-Type: application/json" \
+ -d '{
+"content": "What would be the best rate to swap 100 USDC for DAI?",
+"chatId": "chat-uuid",
+"role": "user"
+}'
+
+```
+
 ---
+```
