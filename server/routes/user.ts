@@ -8,10 +8,6 @@ import * as userController from "../controllers/user";
 router.post("/sync", userController.syncUserController);
 router.get("/users/:privyId", userController.getUserController);
 
-// Delegation routes for EIP-7702
-router.post("/delegations", userController.storeDelegationController);
-router.get("/delegations/:address", userController.getDelegationsController);
-
 // Chat routes
 router.post("/chats", userController.createChatController);
 router.get("/chats/:id", userController.getChatController);

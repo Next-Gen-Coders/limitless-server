@@ -17,11 +17,6 @@ import { deleteMessage } from "./deleteMessage";
 import { syncUser } from "./syncUser";
 import { getUserByPrivyId } from "./getUserByPrivyId";
 
-// Delegation services
-import { storeDelegation } from "./storeDelegation";
-import { getDelegationsByAddress } from "./getDelegationsByAddress";
-import { getDelegationsByUserId } from "./getDelegationsByUserId";
-
 export {
   // Chat exports
   createChat,
@@ -40,9 +35,4 @@ export {
   // User exports
   syncUser,
   getUserByPrivyId,
-
-  // Delegation exports
-  storeDelegation,
-  getDelegationsByAddress,
-  getDelegationsByUserId,
 };

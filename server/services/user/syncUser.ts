@@ -3,7 +3,6 @@ import { users } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { UserSyncRequest } from "../../zod";
 import { randomUUID } from "crypto";
-import { getDelegationsByUserId } from "./getDelegationsByUserId";
 
 export const syncUser = async (data: UserSyncRequest) => {
   try {
@@ -45,14 +44,9 @@ export const syncUser = async (data: UserSyncRequest) => {
       user = newUser[0];
     }
 
-    // Get user's delegations
-    const delegationsResult = await getDelegationsByUserId(user.id);
-    const delegations = delegationsResult.data || [];
-
     return {
       data: {
         user,
-        delegations,
       },
       message:
         existingUser.length > 0

@@ -34,35 +34,6 @@ export const users = pgTable(
   })
 );
 
-// Delegations table for EIP-7702 smart wallet delegations
-export const delegations = pgTable(
-  "delegations",
-  {
-    id: uuid("id").primaryKey(),
-    userId: uuid("user_id").references(() => users.id),
-    chainId: integer("chain_id").notNull(),
-    delegator: text("delegator").notNull(), // User's wallet address
-    delegatee: text("delegatee").notNull(), // Smart account address
-    nonce: text("nonce").notNull(),
-    authority: text("authority").notNull(),
-    signature: text("signature").notNull(),
-    status: text("status").default("pending"), // 'pending' | 'confirmed' | 'failed'
-    transactionHash: text("transaction_hash"),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  },
-  (table) => ({
-    userIdIndex: index("idx_delegations_user_id").on(table.userId),
-    delegatorIndex: index("idx_delegations_delegator").on(table.delegator),
-    chainIdIndex: index("idx_delegations_chain_id").on(table.chainId),
-    createdAtIndex: index("idx_delegations_created_at").on(table.createdAt),
-    uniqueDelegation: unique("unique_delegation_per_user_chain_nonce").on(
-      table.userId,
-      table.chainId,
-      table.nonce
-    ),
-  })
-);
-
 export const chats = pgTable("chats", {
   id: uuid("id").primaryKey(),
   userId: uuid("user_id").references(() => users.id),
@@ -80,18 +51,11 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
-
+// Smart wallet transactions table for EIP-7702
 // Users
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
 export type InsertUser = typeof users.$inferInsert;
-export type SelectUser = typeof users.$inferSelect;
-
-// Delegations
-export const insertDelegationSchema = createInsertSchema(delegations);
-export const selectDelegationSchema = createSelectSchema(delegations);
-export type InsertDelegation = typeof delegations.$inferInsert;
-export type SelectDelegation = typeof delegations.$inferSelect;
 
 // Chats
 export const insertChatSchema = createInsertSchema(chats);

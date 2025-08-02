@@ -30,16 +30,6 @@ import {
   GetUserRequest,
   UserSyncResponse,
 } from "./userSchemas";
-import {
-  storeDelegationSchema,
-  getDelegationsSchema,
-  getDelegationsQuerySchema,
-  delegationResponseSchema,
-  StoreDelegationRequest,
-  GetDelegationsRequest,
-  GetDelegationsQuery,
-  DelegationData,
-} from "./delegationSchemas";
 
 export {
   // Chat schemas
@@ -75,14 +65,4 @@ export {
   UserSyncRequest,
   GetUserRequest,
   UserSyncResponse,
-
-  // Delegation schemas
-  storeDelegationSchema,
-  getDelegationsSchema,
-  getDelegationsQuerySchema,
-  delegationResponseSchema,
-  StoreDelegationRequest,
-  GetDelegationsRequest,
-  GetDelegationsQuery,
-  DelegationData,
 };

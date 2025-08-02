@@ -18,9 +18,6 @@ import {
   deleteMessageSchema,
   userSyncSchema,
   getUserSchema,
-  storeDelegationSchema,
-  getDelegationsSchema,
-  getDelegationsQuerySchema,
 } from "../zod";
 
 // User Controllers for Privy Integration
@@ -34,7 +31,6 @@ export const syncUserController: RequestHandler = async (req, res) => {
     return res.status(200).json({
       success: true,
       user: data.user,
-      delegations: data.delegations,
     });
   };
 
@@ -58,77 +54,6 @@ export const getUserController: RequestHandler = async (req, res) => {
     serviceMethod: UserService.getUserByPrivyId,
     scope: SCOPE.USER,
   });
-};
-
-// Delegation Controllers
-export const storeDelegationController: RequestHandler = async (req, res) => {
-  await ControllerHelper({
-    res,
-    logMessage: "Store Delegation",
-    validationSchema: storeDelegationSchema,
-    validationData: req.body,
-    serviceMethod: UserService.storeDelegation,
-    scope: SCOPE.USER,
-  });
-};
-
-export const getDelegationsController: RequestHandler = async (
-  req,
-  res
-): Promise<void> => {
-  // Validate path params
-  const paramsValidation = getDelegationsSchema.safeParse(req.params);
-  if (!paramsValidation.success) {
-    res.status(400).json({
-      success: false,
-      error: "Invalid parameters",
-      details: paramsValidation.error.errors,
-    });
-    return;
-  }
-
-  // Validate query params
-  const queryValidation = getDelegationsQuerySchema.safeParse(req.query);
-  if (!queryValidation.success) {
-    res.status(400).json({
-      success: false,
-      error: "Invalid query parameters",
-      details: queryValidation.error.errors,
-    });
-    return;
-  }
-
-  try {
-    const chainId = queryValidation.data.chainId
-      ? parseInt(queryValidation.data.chainId)
-      : undefined;
-    const result = await UserService.getDelegationsByAddress(
-      paramsValidation.data,
-      chainId
-    );
-
-    if (result.error) {
-      res.status(400).json({
-        success: false,
-        error: result.error,
-        message: result.message,
-      });
-      return;
-    }
-
-    res.status(200).json({
-      success: true,
-      delegations: result.data,
-      count: result.count,
-      message: result.message,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      error: "Internal Server Error",
-      message: error.message,
-    });
-  }
 };
 
 // Chat Controllers
