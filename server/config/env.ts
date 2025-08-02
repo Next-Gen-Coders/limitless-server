@@ -13,7 +13,12 @@ export const ENV = {
 } as const;
 
 // Validate required environment variables
-const requiredEnvVars = ["DATABASE_URL", "DIRECT_URL"];
+const requiredEnvVars = [
+  "DATABASE_URL",
+  "DIRECT_URL",
+  "PRIVY_APP_ID",
+  "PRIVY_APP_SECRET",
+];
 const missingEnvVars = requiredEnvVars.filter(
   (varName) => !process.env[varName]
 );

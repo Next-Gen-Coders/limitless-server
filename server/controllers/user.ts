@@ -2,6 +2,7 @@ import { RequestHandler, Response } from "express";
 
 import { ControllerHelper } from "../utils/controllerHelper";
 import { SCOPE } from "../utils/enums";
+import * as ResponseHelper from "../utils/responseHelper";
 
 import * as UserService from "../services/user/index";
 import {
@@ -58,11 +59,18 @@ export const getUserController: RequestHandler = async (req, res) => {
 
 // Chat Controllers
 export const createChatController: RequestHandler = async (req, res) => {
+  // Extract userId from authenticated user
+  const userId = req.user?.id;
+  if (!userId) {
+    ResponseHelper.notAuthorized(res, "User not authenticated");
+    return;
+  }
+
   await ControllerHelper({
     res,
     logMessage: "Create Chat",
     validationSchema: addChatSchema,
-    validationData: req.body,
+    validationData: { ...req.body, userId },
     serviceMethod: UserService.createChat,
     scope: SCOPE.USER,
   });
@@ -114,11 +122,18 @@ export const deleteChatController: RequestHandler = async (req, res) => {
 
 // Message Controllers
 export const createMessageController: RequestHandler = async (req, res) => {
+  // Extract userId from authenticated user
+  const userId = req.user?.id;
+  if (!userId) {
+    ResponseHelper.notAuthorized(res, "User not authenticated");
+    return;
+  }
+
   await ControllerHelper({
     res,
     logMessage: "Create Message",
     validationSchema: addMessageSchema,
-    validationData: req.body,
+    validationData: { ...req.body, userId },
     serviceMethod: UserService.createMessage,
     scope: SCOPE.USER,
   });

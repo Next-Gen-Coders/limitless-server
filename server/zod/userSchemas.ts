@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { delegationResponseSchema } from "./delegationSchemas";
 
 // User Sync Schema
 export const userSyncSchema = z.object({
@@ -30,7 +29,6 @@ export const userResponseSchema = z.object({
 export const userSyncResponseSchema = z.object({
   success: z.boolean(),
   user: userResponseSchema,
-  delegations: z.array(delegationResponseSchema),
 });
 
 export type UserSyncRequest = z.infer<typeof userSyncSchema>;
