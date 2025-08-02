@@ -36,14 +36,14 @@ export const ControllerHelper = async <T>({
   try {
     Utils.logInfo({
       message: `${logMessage} API received for ${scope}`,
-      data: JSON.stringify({ validationData }),
+      data: JSON.stringify({ validationData }, null, 2),
     });
     const parsedData = validationSchema.safeParse(validationData);
 
     if (!parsedData.success) {
       Utils.logError({
         message: "Field validation error",
-        data: JSON.stringify(parsedData.error.errors),
+        data: JSON.stringify(parsedData.error.errors, null, 2),
       });
       return onError(res, parsedData.error.errors, "Invalid Credentials");
     }
@@ -53,12 +53,15 @@ export const ControllerHelper = async <T>({
     if (error) {
       Utils.logError({
         message: "Error 400",
-        data: JSON.stringify({ error }),
+        data: JSON.stringify({ error }, null, 2),
       });
       return onError(res, error, message);
     }
 
-    Utils.logInfo({ message: "Success", data: JSON.stringify({ data }) });
+    Utils.logInfo({
+      message: "Success",
+      data: JSON.stringify({ data }, null, 2),
+    });
     if (data?.shouldRedirect) {
       return ResponseHelper.redirect(res, data);
     } else {
@@ -67,7 +70,7 @@ export const ControllerHelper = async <T>({
   } catch (error: any) {
     Utils.logError({
       message: "Internal Server Error",
-      data: JSON.stringify({ error }),
+      data: JSON.stringify({ error }, null, 2),
     });
     return ResponseHelper.error(res, error, "Internal Server Error");
   }
@@ -87,16 +90,22 @@ export const ParameterLessControllerHelper = async ({
     const { data, message, error } = await serviceMethod();
 
     if (error) {
-      Utils.logError({ message: "Error 400", data: JSON.stringify({ error }) });
+      Utils.logError({
+        message: "Error 400",
+        data: JSON.stringify({ error }, null, 2),
+      });
       return ResponseHelper.badRequest(res, error, message);
     }
 
-    Utils.logInfo({ message: "Success", data: JSON.stringify({ data }) });
+    Utils.logInfo({
+      message: "Success",
+      data: JSON.stringify({ data }, null, 2),
+    });
     return ResponseHelper.success(res, data, message);
   } catch (error: any) {
     Utils.logError({
       message: "Internal Server Error",
-      data: JSON.stringify({ error }),
+      data: JSON.stringify({ error }, null, 2),
     });
     return ResponseHelper.error(res, error, "Internal Server Error");
   }
