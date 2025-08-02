@@ -129,12 +129,27 @@ export const createMessageController: RequestHandler = async (req, res) => {
     return;
   }
 
+  // Custom success handler for message creation with potential AI response
+  const onCreateMessageSuccess = (
+    res: Response,
+    data: any,
+    message: string
+  ): Response => {
+    return res.status(200).json({
+      success: true,
+      message,
+      userMessage: data.userMessage || data,
+      aiMessage: data.aiMessage || null,
+    });
+  };
+
   await ControllerHelper({
     res,
     logMessage: "Create Message",
     validationSchema: addMessageSchema,
     validationData: { ...req.body, userId },
     serviceMethod: UserService.createMessage,
+    onSuccess: onCreateMessageSuccess,
     scope: SCOPE.USER,
   });
 };

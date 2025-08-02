@@ -204,7 +204,7 @@ This API provides comprehensive functionality for:
 
 ### `POST /user/messages`
 
-- **Description:** Create a new message.
+- **Description:** Create a new message with automatic AI response generation.
 - **Authentication:** Required (`authenticateAndSync` - auto-syncs user data)
 - **Request:**
 
@@ -216,9 +216,35 @@ This API provides comprehensive functionality for:
   }
   ```
 
-  **Note:** `userId` is automatically extracted from the authenticated user token.
+  **Note:**
 
-- **Response:** Message object
+  - `userId` is automatically extracted from the authenticated user token.
+  - When `role` is "user", the system automatically generates an AI assistant response using LangChain and OpenAI.
+
+- **Response:**
+
+  ```json
+  {
+    "success": true,
+    "message": "Messages created successfully with AI response",
+    "userMessage": {
+      "id": "message-uuid",
+      "content": "User's message",
+      "role": "user",
+      "chatId": "chat-uuid",
+      "userId": "user-uuid",
+      "createdAt": "2025-08-03T12:00:00.000Z"
+    },
+    "aiMessage": {
+      "id": "message-uuid",
+      "content": "AI assistant response with potential tool usage",
+      "role": "assistant",
+      "chatId": "chat-uuid",
+      "userId": "user-uuid",
+      "createdAt": "2025-08-03T12:00:01.000Z"
+    }
+  }
+  ```
 
 ### `GET /user/messages/:id`
 
@@ -262,5 +288,60 @@ This API provides comprehensive functionality for:
 - **Authentication:** Required (`authenticatePrivy`)
 - **Params:** `id` (string, uuid, required)
 - **Response:** Success message
+
+---
+
+## AI Integration
+
+The API includes LangChain.js integration with OpenAI for intelligent message responses and DeFi operations.
+
+### Available AI Tools
+
+1. **1inch Fusion Swap Tool** (`get_swap_quote`):
+
+   - Get real-time swap quotes and rates across multiple blockchains
+   - Supports: Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, Gnosis, Fantom, and more
+   - Get best rates for token swaps with slippage protection
+   - Supports both token symbols (ETH, USDC, BNB) and contract addresses
+   - Example queries:
+     - "Get a quote to swap 1 ETH for USDC on Ethereum"
+     - "How much MATIC would I get for 100 USDC on Polygon?"
+     - "Compare swap rates for 1 BNB to USDT on BSC"
+
+### Environment Variables Required
+
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+ONEINCH_API_KEY=your_1inch_api_key_here
+```
+
+**Getting API Keys:**
+
+- **OpenAI**: Visit [OpenAI Platform](https://platform.openai.com/api-keys)
+- **1inch**: Visit [1inch Developer Portal](https://portal.1inch.dev/) to get your API key
+
+### curl Examples for AI Features
+
+```bash
+# Create message with automatic AI response (requires auth)
+curl -X POST http://localhost:3000/user/messages \
+  -H "Authorization: Bearer <your_privy_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Get a quote to swap 1 ETH for USDC on Ethereum with 0.5% slippage",
+    "chatId": "chat-uuid",
+    "role": "user"
+  }'
+
+# Example DeFi query
+curl -X POST http://localhost:3000/user/messages \
+  -H "Authorization: Bearer <your_privy_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "What would be the best rate to swap 100 USDC for DAI?",
+    "chatId": "chat-uuid",
+    "role": "user"
+  }'
+```
 
 ---

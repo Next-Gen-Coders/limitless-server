@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import routes from "./routes/service";
 import userRoutes from "./routes/user";
 import adminRoutes from "./routes/admin";
+import aiRoutes from "./routes/ai";
 dotenv.config();
 
 const app = express();
@@ -20,6 +21,7 @@ const allowedOrigins = [
   "http://localhost:3000", // Alternative dev port
   "http://localhost:4173", // Vite preview
   process.env.FRONTEND_URL, // Production frontend URL
+  "*", // Allow all origins for development
 ].filter((origin): origin is string => Boolean(origin));
 
 app.use(
@@ -32,8 +34,9 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", routes);
-app.use("/users", userRoutes);
+app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
+app.use("/ai", aiRoutes);
 
 // Basic route
 app.get("/", (req: Request, res: Response) => {
