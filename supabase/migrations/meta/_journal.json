@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1754082399625,
+      "tag": "0000_dear_slayback",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1754085978339,
+      "tag": "0001_rapid_quasar",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1754109091550,
+      "tag": "0002_early_tattoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1754112941635,
+      "tag": "0003_silky_shinobi_shaw",
+      "breakpoints": true
+    }
+  ]
+}
