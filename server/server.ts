@@ -1,4 +1,9 @@
-import express, { Request, Response } from "express";
+import express, {
+  Request,
+  Response,
+  NextFunction,
+  ErrorRequestHandler,
+} from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import routes from "./routes/service";
@@ -10,12 +15,24 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middlewares
-app.use(cors());
-app.use(express.json());
+const allowedOrigins = [
+  "http://localhost:5173", // Vite dev server
+  "http://localhost:3000", // Alternative dev port
+  "http://localhost:4173", // Vite preview
+  process.env.FRONTEND_URL, // Production frontend URL
+].filter((origin): origin is string => Boolean(origin));
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/", routes);
-app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);
 
 // Basic route
@@ -23,11 +40,29 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to our API v2!" });
 });
 
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: any) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
-});
+// Error handling middleware - must be after routes
+const errorHandler: ErrorRequestHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  // Handle JSON parsing errors
+  if (err.type === "entity.parse.failed" || err.status === 400) {
+    res.status(400).json({
+      error: "Invalid JSON format",
+      message: "Please check your JSON syntax",
+      details: err.message,
+    });
+    return;
+  }
+
+  console.error("Error:", err.message);
+  console.error("Stack:", err.stack);
+  res.status(500).json({ error: "Internal Server Error" });
+};
+
+app.use(errorHandler);
 
 // Start server
 app.listen(port, () => {
