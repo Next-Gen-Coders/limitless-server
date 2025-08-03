@@ -212,9 +212,9 @@ function formatPrices(
       addressToTokenMap.get(address.toLowerCase()) || address;
     const formattedPrice = parseFloat(price).toFixed(6);
 
-    // Display the original token symbol if it was a symbol, otherwise show the address
+    // Display the original token symbol if it was a symbol, otherwise show the full address
     const displayToken = originalToken.startsWith("0x")
-      ? `${originalToken.slice(0, 6)}...${originalToken.slice(-4)}`
+      ? originalToken
       : originalToken.toUpperCase();
 
     // Get the proper checksum address for display

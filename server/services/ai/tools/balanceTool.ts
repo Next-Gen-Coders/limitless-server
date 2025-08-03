@@ -44,7 +44,7 @@ export function getTokenSymbol(address: string, chainId: number): string {
     1: {
       // Ethereum
       "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": "ETH",
-      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "USDC",
+      "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": "USDC",
       "0xdac17f958d2ee523a2206206994597c13d831ec7": "USDT",
       "0x6b175474e89094c44da98b954eedeac495271d0f": "DAI",
       "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "WETH",
@@ -152,8 +152,8 @@ export function getTokenSymbol(address: string, chainId: number): string {
     return tokens[lowerAddress];
   }
 
-  // Return abbreviated address if not found
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  // Return full address if token not found in mapping
+  return address;
 }
 
 // Get all token balances for a wallet
@@ -426,9 +426,7 @@ function formatMultipleWalletsBalances(
         )
       : Object.entries(balances);
 
-    result += `**Wallet:** ${walletAddress.slice(0, 6)}...${walletAddress.slice(
-      -4
-    )}\n`;
+    result += `**Wallet:** ${walletAddress}\n`;
     result += `**Tokens with Balance:** ${filteredBalances.length}\n`;
 
     if (filteredBalances.length === 0) {
