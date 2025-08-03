@@ -8,6 +8,7 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { ENV } from "../../config/env";
 import { availableTools, toolRegistry } from "./tools";
 import { getChatHistory as getDbChatHistory } from "./dbMemory";
+import { getUserByChatId } from "../user/getUserByChatId";
 
 
 
@@ -21,11 +22,22 @@ const model = new ChatOpenAI({
 // Bind tools to the model
 const modelWithTools = model.bindTools(availableTools);
 
-// Create chat prompt template for our agent
-const agentPrompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    `You are a helpful AI assistant for the Limitless platform. You have access to powerful DeFi, NFT, price, gas, balance, and history tools.
+// Function to create dynamic system prompt based on user data
+const createSystemPrompt = (userData: any = null) => {
+  let userInfo = "";
+  
+  if (userData) {
+    userInfo = `\n\n**USER INFORMATION:**
+- Wallet Address: ${userData.walletAddress || 'Not set'}
+- Email: ${userData.email || 'Not provided'}
+- User ID: ${userData.id}
+
+When the user asks about balances, transactions, NFTs, or any blockchain-related queries without specifying an address, automatically use their wallet address: ${userData.walletAddress || 'their address is not set'}
+
+If the user says "my balance", "my transactions", "my NFTs", etc., use their wallet address automatically.`;
+  }
+
+  return `You are a helpful AI assistant for the Limitless platform. You have access to powerful DeFi, NFT, price, gas, balance, and history tools.
 
 You have access to conversation history and can remember previous messages in our current chat session. You can refer to earlier parts of our conversation when relevant.
 
@@ -34,7 +46,7 @@ You can use multiple tools in sequence to provide comprehensive analysis. Think 
 **IMPORTANT**: When using multiple tools, make sure to use the EXACT data returned from previous tools. For example:
 - If you get an address from a domain lookup, use that EXACT address for subsequent tools
 - If you get token information, use the EXACT contract addresses and token symbols returned
-- Always use the complete, untruncated addresses and data from tool responses
+- Always use the complete, untruncated addresses and data from tool responses${userInfo}
 
 Available tools and their capabilities:
 
@@ -182,11 +194,8 @@ Best Practices:
 
 **Image Rendering**: Always render images in markdown format when image URLs are present in tool responses (NFT images, avatars, token logos) using ![description](url) format.
 
-Think step by step about what tools you need to use and in what order. You can call multiple tools to build a comprehensive response.`,
-  ],
-  new MessagesPlaceholder("chat_history"),
-  ["human", "{input}"],
-]);
+Think step by step about what tools you need to use and in what order. You can call multiple tools to build a comprehensive response.`;
+};
 
 // Custom tool execution function
 async function executeToolCall(toolName: string, args: any): Promise<string> {
@@ -213,8 +222,16 @@ async function executeToolCall(toolName: string, args: any): Promise<string> {
   }
 }
 
-// Create a simple chain for tool calling
-const chain = RunnableSequence.from([agentPrompt, modelWithTools]);
+// Function to create dynamic chain with user-specific prompt
+const createChain = (userData: any = null) => {
+  const agentPrompt = ChatPromptTemplate.fromMessages([
+    ["system", createSystemPrompt(userData)],
+    new MessagesPlaceholder("chat_history"),
+    ["human", "{input}"],
+  ]);
+  
+  return RunnableSequence.from([agentPrompt, modelWithTools]);
+};
 
 // Helper function to process image URLs and convert them to markdown
 function processImageUrls(content: string): string {
@@ -318,6 +335,23 @@ export const generateAIResponse = async ({
       "Available tools:",
       availableTools.map((t) => t.name)
     );
+
+    // Get user data from chat
+    const userResult = await getUserByChatId(chatId);
+    const userData = userResult.data;
+    
+    if (userData) {
+      console.log("User data found:", {
+        id: userData.id,
+        walletAddress: userData.walletAddress,
+        email: userData.email
+      });
+    } else {
+      console.log("No user data found for chatId:", chatId);
+    }
+
+    // Create dynamic chain with user data
+    const chain = createChain(userData);
 
     // Get chat history from database (last 7 messages for context)
     const chatHistory = await getDbChatHistory(chatId, 7);

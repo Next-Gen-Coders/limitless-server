@@ -16,6 +16,7 @@ import { deleteMessage } from "./deleteMessage";
 // User services for Privy integration
 import { syncUser } from "./syncUser";
 import { getUserByPrivyId } from "./getUserByPrivyId";
+import { getUserByChatId } from "./getUserByChatId";
 
 export {
   // Chat exports
@@ -35,4 +36,5 @@ export {
   // User exports
   syncUser,
   getUserByPrivyId,
+  getUserByChatId,
 };
