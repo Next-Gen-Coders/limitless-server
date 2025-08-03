@@ -20,13 +20,21 @@ export const testAIController: RequestHandler = async (req, res) => {
         },
       ],
     });
+
+    const responseData: any = {
+      response: response.content,
+      toolsUsed: response.toolsUsed,
+      error: response.error,
+    };
+
+    // Add chartData if present
+    if (response.chartData) {
+      responseData.chartData = response.chartData;
+    }
+
     ResponseHelper.success(
       res,
-      {
-        response: response.content,
-        toolsUsed: response.toolsUsed,
-        error: response.error,
-      },
+      responseData,
       "AI response generated successfully"
     );
   } catch (error: any) {
