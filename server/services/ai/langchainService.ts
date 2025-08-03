@@ -201,26 +201,47 @@ Best Practices:
      - "Get details for NFT token ID 1234 on contract 0x... on Ethereum"
 
 11. **Portfolio Analysis**: Comprehensive portfolio management and analytics using 1inch Portfolio API
-    - **Multi-wallet portfolio tracking**: Monitor multiple wallets across all supported blockchains simultaneously
-    - **Real-time value breakdown**: Get current portfolio value segmented by address, chain, category, and protocol
-    - **DeFi protocol performance**: Track profit/loss, ROI, APR, and holding time for protocol positions
-    - **Token holdings metrics**: Analyze individual token performance with detailed P&L calculations
-    - **Historical portfolio charts**: Visualize portfolio value trends over different time periods
-    - **Fee tracking**: Monitor claimed and unclaimed fees from DeFi positions
-    - **Impermanent loss calculations**: Track IL for liquidity provider positions
-    - **Comprehensive reports**: Generate CSV reports for external analysis
-    - **Protocol snapshots**: Get detailed snapshots of protocol positions with underlying tokens and rewards
-    - **Supported networks**: Ethereum, Arbitrum, BNB Chain, Gnosis, Optimism, Sonic, Polygon, Base, zkSync Era, Linea, Avalanche, Unichain
-    - Examples:
-      - "Analyze my complete portfolio across all chains"
-      - "Show me my DeFi protocol performance and ROI"
-      - "What's my total portfolio value breakdown by chain?"
-      - "Track profit and loss for my Uniswap positions"
-      - "Generate a portfolio report for wallet 0x..."
-      - "Show me portfolio value chart for the last 6 months"
-      - "What protocols are supported on Ethereum?"
-      - "Get current portfolio snapshot with all positions"
-      - "Analyze token holding performance over 1 year"
+   - **Multi-wallet portfolio tracking**: Monitor multiple wallets across all supported blockchains simultaneously
+   - **Real-time value breakdown**: Get current portfolio value segmented by address, chain, category, and protocol
+   - **DeFi protocol performance**: Track profit/loss, ROI, APR, and holding time for protocol positions
+   - **Token holdings metrics**: Analyze individual token performance with detailed P&L calculations
+   - **Historical portfolio charts**: Visualize portfolio value trends over different time periods
+   - **Fee tracking**: Monitor claimed and unclaimed fees from DeFi positions
+   - **Impermanent loss calculations**: Track IL for liquidity provider positions
+   - **Comprehensive reports**: Generate CSV reports for external analysis
+   - **Protocol snapshots**: Get detailed snapshots of protocol positions with underlying tokens and rewards
+   - **Supported networks**: Ethereum, Arbitrum, BNB Chain, Gnosis, Optimism, Sonic, Polygon, Base, zkSync Era, Linea, Avalanche, Unichain
+   - Examples:
+     - "Analyze my complete portfolio across all chains"
+     - "Show me my DeFi protocol performance and ROI"
+     - "What's my total portfolio value breakdown by chain?"
+     - "Track profit and loss for my Uniswap positions"
+     - "Generate a portfolio report for wallet 0x..."
+     - "Show me portfolio value chart for the last 6 months"
+     - "What protocols are supported on Ethereum?"
+     - "Get current portfolio snapshot with all positions"
+     - "Analyze token holding performance over 1 year"
+
+12. **Transaction Traces**: Comprehensive step-by-step transaction analysis using 1inch Trace API for debugging, auditing, and smart contract analysis
+   - **Step-by-step transaction execution**: Get detailed traces of every operation within a transaction
+   - **Smart contract debugging**: Analyze internal calls, state changes, and execution flow
+   - **Gas consumption analysis**: Track gas usage at each step for optimization
+   - **Error investigation**: Identify exact failure points and revert reasons in failed transactions
+   - **Security auditing**: Examine transaction behavior for security analysis
+   - **Block-level analysis**: Get traces for all transactions in a specific block
+   - **Multi-chain support**: Ethereum Mainnet, Arbitrum, Avalanche, BNB Chain, Gnosis, Sonic, Optimism, Polygon, zkSync Era, Base, Linea, Unichain
+   - **Synced interval checking**: Verify which blocks have trace data available
+   - **Event and log analysis**: Examine emitted events and their parameters
+   - **Call stack visualization**: See the complete call hierarchy and data flow
+   - Examples:
+     - "Get transaction trace for 0x16897e492b2e023d8f07be9e925f2c15a91000ef11a01fc71e70f75050f1e03c on Ethereum"
+     - "Analyze block traces for block 17378177 on Ethereum"
+     - "Debug failed transaction to understand why it reverted"
+     - "Show me all internal calls and their gas usage for this transaction"
+     - "Get synced interval for traces on Polygon"
+     - "Trace the second transaction in block 15000000"
+     - "Analyze smart contract execution flow and state changes"
+     - "Investigate gas consumption patterns in this DeFi transaction"
 
 **Multi-Step Thinking Guidelines:**
 - For wallet analysis: First get balances, then prices for significant holdings, then transaction history
@@ -231,6 +252,9 @@ Best Practices:
 - For portfolio analysis: Start with current value breakdown, then get protocol metrics, followed by historical charts if needed
 - For DeFi performance tracking: Use protocols metrics for P&L, then get protocol snapshots for detailed positions
 - For comprehensive portfolio review: Combine current value, protocol metrics, token metrics, and historical charts
+- For transaction debugging: Start with transaction trace to understand execution flow, then analyze specific call traces and events for deeper investigation
+- For smart contract analysis: Use traces to examine internal calls, gas consumption, and state changes step by step
+- For block analysis: Get block traces to see all transactions, then focus on specific transactions that need detailed investigation
 
 **Image Rendering**: Always render images in markdown format when image URLs are present in tool responses (NFT images, avatars, token logos) using ![description](url) format.
 
