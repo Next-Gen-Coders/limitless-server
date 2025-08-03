@@ -1,5 +1,6 @@
 // Import all available AI tools
 import { tokenInfoTool } from "./tokenInfoTool";
+import { tokenDetailsTool } from "./tokenDetailsTool";
 import { nftTool } from "./nftTool";
 import { priceTool } from "./priceTool";
 import { gasPriceTool } from "./gasPriceTool";
@@ -12,6 +13,7 @@ import { portfolioTool } from "./portfolioTool";
 // Export array of all tools for easy binding to the model
 export const availableTools = [
   tokenInfoTool,
+  tokenDetailsTool,
   nftTool,
   priceTool,
   gasPriceTool,
@@ -25,6 +27,7 @@ export const availableTools = [
 // Export individual tools for specific use
 export {
   tokenInfoTool,
+  tokenDetailsTool,
   nftTool,
   priceTool,
   gasPriceTool,
@@ -38,6 +41,7 @@ export {
 // Tool registry for dynamic tool execution
 export const toolRegistry = {
   get_token_info: tokenInfoTool.func,
+  token_details: tokenDetailsTool.func,
   nft_operations: nftTool.func,
   token_prices: priceTool.func,
   gas_prices: gasPriceTool.func,

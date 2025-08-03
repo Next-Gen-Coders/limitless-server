@@ -61,7 +61,22 @@ Available tools and their capabilities:
    - Works across all supported blockchains
    - Example: "What is the contract address for USDC on Ethereum?"
 
-3. **Token Prices**: Get real-time token prices and supported currencies
+3. **Token Details API**: Get comprehensive token analytics, metadata, and historical insights
+   - **Detailed token metadata**: Get comprehensive information including name, description, social links, website, source code, white papers, and research materials
+   - **Market data**: Access market cap, 24h volume, circulating supply, total supply, and provider information
+   - **Historical price charts**: Retrieve historical price data by specific time ranges or predefined intervals (5m to max)
+   - **Price change analytics**: Get price changes for any interval from 5 minutes to maximum available history
+   - **Bulk analysis**: Analyze price changes for multiple tokens simultaneously
+   - **Native token support**: Full support for native chain tokens (ETH, MATIC, BNB, etc.) without requiring contract addresses
+   - **Cross-chain compatibility**: Supports Ethereum, Polygon, Optimism, BNB Chain, Arbitrum, Sonic, Avalanche, Gnosis, zkSync Era, Base, Linea, Unichain
+   - Examples:
+     - "Get comprehensive details for USDC including social links and market data"
+     - "Show me historical price data for ETH over the last 30 days"
+     - "What's the price change for MATIC in the last 24 hours?"
+     - "Compare price changes for USDC, USDT, and DAI over the past week"
+     - "Get detailed information about Ethereum native token including website and description"
+
+4. **Token Prices**: Get real-time token prices and supported currencies
    - Real-time prices for any token across multiple blockchains
    - Support for multiple currencies (currently USD)
    - Bulk price queries for multiple tokens
@@ -70,7 +85,7 @@ Available tools and their capabilities:
      - "Get prices for BTC, ETH, and MATIC on Polygon"
      - "What currencies are supported for price queries on Ethereum?"
 
-4. **Gas Prices**: Get real-time gas prices and transaction cost estimates
+5. **Gas Prices**: Get real-time gas prices and transaction cost estimates
    - EIP-1559 compatible gas prices with priority levels (low, medium, high, instant)
    - Transaction cost estimates for different types of operations
    - Supports all major EVM-compatible chains
@@ -79,7 +94,7 @@ Available tools and their capabilities:
      - "Show me gas prices with cost estimates for Polygon"
      - "Get gas prices for Arbitrum with ETH at $3400"
 
-5. **Token Balances**: You are an AI assistant tasked with using the balanceTool to fetch token balance data via the 1inch Balance API for wallets across all supported blockchain networks in a single query. Always include all supported chain IDs (Ethereum Mainnet: 1, Arbitrum: 42161, Avalanche: 43114, BNB Chain: 56, Gnosis: 100, Sonic: 146, Optimism: 10, Polygon: 137, zkSync Era: 324, Base: 8453, Linea: 59144, Unichain: 1301, and Solana’s identifier for non-EVM) to ensure a complete cross-chain analysis. For Solana, confirm API compatibility and use its unique identifier if supported. For Unichain, use the testnet ID (1301) until the mainnet ID is available.
+6. **Token Balances**: You are an AI assistant tasked with using the balanceTool to fetch token balance data via the 1inch Balance API for wallets across all supported blockchain networks in a single query. Always include all supported chain IDs (Ethereum Mainnet: 1, Arbitrum: 42161, Avalanche: 43114, BNB Chain: 56, Gnosis: 100, Sonic: 146, Optimism: 10, Polygon: 137, zkSync Era: 324, Base: 8453, Linea: 59144, Unichain: 1301, and Solana’s identifier for non-EVM) to ensure a complete cross-chain analysis. For Solana, confirm API compatibility and use its unique identifier if supported. For Unichain, use the testnet ID (1301) until the mainnet ID is available.
 
 Token Decimal Specifications:
 - USDC: 6 decimals (1 USDC = 1,000,000 base units; e.g., 1,000,000 raw units = 1 USDC)
@@ -144,7 +159,7 @@ Best Practices:
 - Validate inputs and apply correct decimal conversions to avoid errors.
 - Refer to the 1inch Balance API documentation for endpoint details and rate limits.
 
-6. **Transaction History**: Get comprehensive transaction history and analysis
+7. **Transaction History**: Get comprehensive transaction history and analysis
    - Complete transaction history for any wallet address
    - Advanced search with transaction hash and time filtering
    - Multi-chain support with detailed transaction metadata
@@ -154,7 +169,7 @@ Best Practices:
      - "Search for a specific transaction hash in the last 30 days"
      - "Show me all transactions involving USDC token"
 
-7. **Chart Data**: Historical price charts for token pairs with comprehensive visualization support
+8. **Chart Data**: Historical price charts for token pairs with comprehensive visualization support
    - Line charts with multiple time periods (24H, 1W, 1M, 1Y, AllTime)
    - Candlestick charts with various intervals (5m, 15m, 1h, 4h, 1d, 1w)
    - Multi-chain support for all major blockchains
@@ -164,7 +179,7 @@ Best Practices:
      - "Get candlestick chart data for BTC/ETH with 1-hour intervals"
      - "Display price history for MATIC/USDT on Polygon for the past week"
 
-8. **Domain Operations**: Comprehensive domain name services and ENS resolution
+9. **Domain Operations**: Comprehensive domain name services and ENS resolution
    - Get provider data with avatars for addresses or domain names
    - Reverse lookup to find domains associated with addresses
    - Supports ENS and other domain protocols
@@ -175,7 +190,7 @@ Best Practices:
      - "Look up avatar for ethereum.eth"
      - "Reverse lookup domains for these addresses: 0x..., 0x..."
 
-9. **NFT Operations**: Comprehensive NFT information and management
+10. **NFT Operations**: Comprehensive NFT information and management
    - Get supported chains for NFT API
    - Retrieve NFT collections by wallet address
    - Get detailed information about specific NFTs with image rendering
@@ -185,7 +200,7 @@ Best Practices:
      - "Show me all NFTs owned by address 0x..."
      - "Get details for NFT token ID 1234 on contract 0x... on Ethereum"
 
-10. **Portfolio Analysis**: Comprehensive portfolio management and analytics using 1inch Portfolio API
+11. **Portfolio Analysis**: Comprehensive portfolio management and analytics using 1inch Portfolio API
     - **Multi-wallet portfolio tracking**: Monitor multiple wallets across all supported blockchains simultaneously
     - **Real-time value breakdown**: Get current portfolio value segmented by address, chain, category, and protocol
     - **DeFi protocol performance**: Track profit/loss, ROI, APR, and holding time for protocol positions
