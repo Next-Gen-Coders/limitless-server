@@ -93,20 +93,21 @@ This API provides comprehensive functionality for:
 
 ### `POST /user/sync`
 
-- **Description:** Sync user with Privy.
+- **Description:** Sync user with Privy authentication system.
 - **Authentication:** None required (public endpoint for initial user setup)
 - **Request:**
 
   ```json
   {
-    "privyId": "string (required)",
-    "email": "string (optional, email)",
+    "privyId": "string (required, min 1 char)",
+    "email": "string (optional, must be valid email format)",
     "walletAddress": "string (optional)",
-    "linkedAccounts": [ ... ] (optional)
+    "linkedAccounts": "array (optional, any[])",
+    "createdAt": "string (optional, ISO date string)"
   }
   ```
 
-- **Response:**
+- **Response (200 OK):**
 
   ```json
   {
@@ -123,22 +124,64 @@ This API provides comprehensive functionality for:
   }
   ```
 
+- **Error Responses:**
+
+  ```json
+  // 400 Bad Request
+  {
+    "success": false,
+    "message": "Validation error",
+    "data": "Privy ID is required"
+  }
+
+  // 500 Internal Server Error
+  {
+    "success": false,
+    "message": "Failed to sync user",
+    "data": "error details"
+  }
+  ```
+
 ### `GET /user/users/:privyId`
 
 - **Description:** Get user by Privy ID.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `privyId` (string, required)
-- **Response:**
+- **Params:** `privyId` (string, required, min 1 char)
+- **Response (200 OK):**
 
   ```json
   {
-    "id": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
-    "privyId": "privy_123456",
-    "email": "user@example.com",
-    "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
-    "linkedAccounts": [],
-    "createdAt": "2025-08-02T12:00:00.000Z",
-    "updatedAt": "2025-08-02T12:00:00.000Z"
+    "success": true,
+    "message": "User retrieved successfully",
+    "data": {
+      "id": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+      "privyId": "privy_123456",
+      "email": "user@example.com",
+      "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+      "linkedAccounts": [],
+      "createdAt": "2025-08-02T12:00:00.000Z",
+      "updatedAt": "2025-08-02T12:00:00.000Z"
+    }
+  }
+  ```
+
+- **Error Responses:**
+
+  ```json
+  // 401 Unauthorized
+  {
+    "success": false,
+    "data": {
+      "message": "Missing or invalid authorization header"
+    }
+  }
+
+  // 404 Not Found
+  {
+    "success": false,
+    "data": {
+      "message": "User not found"
+    }
   }
   ```
 
@@ -148,55 +191,159 @@ This API provides comprehensive functionality for:
 
 ### `POST /user/chats`
 
-- **Description:** Create a new chat.
+- **Description:** Create a new chat for the authenticated user.
 - **Authentication:** Required (`authenticateAndSync` - auto-syncs user data)
 - **Request:**
 
   ```json
   {
-    "title": "string (required)"
+    "title": "string (required, min 1 char, max 255 chars)"
   }
   ```
 
   **Note:** `userId` is automatically extracted from the authenticated user token.
 
-- **Response:** Chat object
+- **Response (201 Created):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Chat created successfully",
+    "data": {
+      "id": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+      "title": "DeFi Portfolio Analysis",
+      "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+      "createdAt": "2025-08-02T12:00:00.000Z",
+      "updatedAt": "2025-08-02T12:00:00.000Z"
+    }
+  }
+  ```
+
+- **Error Responses:**
+
+  ```json
+  // 400 Bad Request
+  {
+    "success": false,
+    "message": "Validation error",
+    "data": "Title is required and must be between 1-255 characters"
+  }
+
+  // 401 Unauthorized
+  {
+    "success": false,
+    "data": {
+      "message": "Missing or invalid authorization header"
+    }
+  }
+  ```
 
 ### `GET /user/chats/:id`
 
-- **Description:** Get chat by ID.
+- **Description:** Get a specific chat by ID.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `id` (string, uuid, required)
-- **Response:** Chat object
+- **Params:** `id` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Chat retrieved successfully",
+    "data": {
+      "id": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+      "title": "DeFi Portfolio Analysis",
+      "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+      "createdAt": "2025-08-02T12:00:00.000Z",
+      "updatedAt": "2025-08-02T12:00:00.000Z"
+    }
+  }
+  ```
+
+- **Error Responses:**
+
+  ```json
+  // 404 Not Found
+  {
+    "success": false,
+    "data": {
+      "message": "Chat not found"
+    }
+  }
+  ```
 
 ### `GET /user/users/:userId/chats`
 
-- **Description:** Get all chats for a user.
+- **Description:** Get all chats for a specific user.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `userId` (string, uuid, required)
-- **Response:** Array of chat objects
+- **Params:** `userId` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Chats retrieved successfully",
+    "data": [
+      {
+        "id": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "title": "DeFi Portfolio Analysis",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T12:00:00.000Z",
+        "updatedAt": "2025-08-02T12:00:00.000Z"
+      },
+      {
+        "id": "c2a2b3d4-e5f6-7890-1234-56789abcdef2",
+        "title": "Token Swap Analysis",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T11:00:00.000Z",
+        "updatedAt": "2025-08-02T11:00:00.000Z"
+      }
+    ]
+  }
+  ```
 
 ### `PUT /user/chats/:id`
 
-- **Description:** Update a chat.
+- **Description:** Update an existing chat.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `id` (string, uuid, required)
+- **Params:** `id` (string, UUID format, required)
 - **Request:**
 
   ```json
   {
-    "title": "string (required)"
+    "title": "string (required, min 1 char, max 255 chars)"
   }
   ```
 
-- **Response:** Updated chat object
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Chat updated successfully",
+    "data": {
+      "id": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+      "title": "Updated Chat Title",
+      "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+      "createdAt": "2025-08-02T12:00:00.000Z",
+      "updatedAt": "2025-08-02T12:30:00.000Z"
+    }
+  }
+  ```
 
 ### `DELETE /user/chats/:id`
 
-- **Description:** Delete a chat.
+- **Description:** Delete a chat and all its associated messages.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `id` (string, uuid, required)
-- **Response:** Success message
+- **Params:** `id` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Chat deleted successfully",
+    "data": null
+  }
+  ```
 
 ---
 
@@ -210,9 +357,9 @@ This API provides comprehensive functionality for:
 
   ```json
   {
-    "content": "string (required)",
-    "chatId": "string (uuid, required)",
-    "role": "user|assistant (required)"
+    "content": "string (required, min 1 char)",
+    "chatId": "string (required, UUID format)",
+    "role": "user|assistant (required, enum: 'user' or 'assistant')"
   }
   ```
 
@@ -220,74 +367,273 @@ This API provides comprehensive functionality for:
 
   - `userId` is automatically extracted from the authenticated user token.
   - When `role` is "user", the system automatically generates an AI assistant response using LangChain and OpenAI.
+  - AI responses may include usage of DeFi tools for token prices, swap quotes, gas prices, etc.
 
-- **Response:**
+- **Response (201 Created):**
 
   ```json
   {
     "success": true,
     "message": "Messages created successfully with AI response",
-    "userMessage": {
-      "id": "message-uuid",
-      "content": "User's message",
-      "role": "user",
-      "chatId": "chat-uuid",
-      "userId": "user-uuid",
-      "createdAt": "2025-08-03T12:00:00.000Z"
-    },
-    "aiMessage": {
-      "id": "message-uuid",
-      "content": "AI assistant response with potential tool usage",
-      "role": "assistant",
-      "chatId": "chat-uuid",
-      "userId": "user-uuid",
-      "createdAt": "2025-08-03T12:00:01.000Z"
+    "data": {
+      "userMessage": {
+        "id": "m1a2b3d4-e5f6-7890-1234-56789abcdef0",
+        "content": "What's the current price of ETH?",
+        "role": "user",
+        "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T12:00:00.000Z",
+        "updatedAt": "2025-08-02T12:00:00.000Z"
+      },
+      "aiMessage": {
+        "id": "m2a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "content": "The current price of ETH is $3,420.50 USD. This price is updated in real-time and reflects the latest market data.",
+        "role": "assistant",
+        "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T12:00:02.000Z",
+        "updatedAt": "2025-08-02T12:00:02.000Z"
+      }
+    }
+  }
+  ```
+
+- **Error Responses:**
+
+  ```json
+  // 400 Bad Request
+  {
+    "success": false,
+    "message": "Validation error",
+    "data": "Content is required and must be at least 1 character"
+  }
+
+  // 401 Unauthorized
+  {
+    "success": false,
+    "data": {
+      "message": "Missing or invalid authorization header"
+    }
+  }
+
+  // 404 Not Found (if chatId doesn't exist)
+  {
+    "success": false,
+    "data": {
+      "message": "Chat not found"
     }
   }
   ```
 
 ### `GET /user/messages/:id`
 
-- **Description:** Get message by ID.
+- **Description:** Get a specific message by ID.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `id` (string, uuid, required)
-- **Response:** Message object
+- **Params:** `id` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Message retrieved successfully",
+    "data": {
+      "id": "m1a2b3d4-e5f6-7890-1234-56789abcdef0",
+      "content": "What's the current price of ETH?",
+      "role": "user",
+      "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+      "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+      "createdAt": "2025-08-02T12:00:00.000Z",
+      "updatedAt": "2025-08-02T12:00:00.000Z"
+    }
+  }
+  ```
 
 ### `GET /user/chats/:chatId/messages`
 
-- **Description:** Get all messages in a chat.
+- **Description:** Get all messages in a specific chat.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `chatId` (string, uuid, required)
-- **Response:** Array of message objects
+- **Params:** `chatId` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Messages retrieved successfully",
+    "data": [
+      {
+        "id": "m1a2b3d4-e5f6-7890-1234-56789abcdef0",
+        "content": "What's the current price of ETH?",
+        "role": "user",
+        "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T12:00:00.000Z",
+        "updatedAt": "2025-08-02T12:00:00.000Z"
+      },
+      {
+        "id": "m2a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "content": "The current price of ETH is $3,420.50 USD.",
+        "role": "assistant",
+        "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T12:00:02.000Z",
+        "updatedAt": "2025-08-02T12:00:02.000Z"
+      }
+    ]
+  }
+  ```
 
 ### `GET /user/users/:userId/messages`
 
-- **Description:** Get all messages by a user.
+- **Description:** Get all messages by a specific user.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `userId` (string, uuid, required)
-- **Response:** Array of message objects
+- **Params:** `userId` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Messages retrieved successfully",
+    "data": [
+      {
+        "id": "m1a2b3d4-e5f6-7890-1234-56789abcdef0",
+        "content": "What's the current price of ETH?",
+        "role": "user",
+        "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+        "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+        "createdAt": "2025-08-02T12:00:00.000Z",
+        "updatedAt": "2025-08-02T12:00:00.000Z"
+      }
+    ]
+  }
+  ```
 
 ### `PUT /user/messages/:id`
 
-- **Description:** Update a message.
+- **Description:** Update an existing message.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `id` (string, uuid, required)
+- **Params:** `id` (string, UUID format, required)
 - **Request:**
 
   ```json
   {
-    "content": "string (required)"
+    "content": "string (required, min 1 char)"
   }
   ```
 
-- **Response:** Updated message object
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Message updated successfully",
+    "data": {
+      "id": "m1a2b3d4-e5f6-7890-1234-56789abcdef0",
+      "content": "Updated message content",
+      "role": "user",
+      "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+      "userId": "b1a2c3d4-e5f6-7890-1234-56789abcdef0",
+      "createdAt": "2025-08-02T12:00:00.000Z",
+      "updatedAt": "2025-08-02T12:30:00.000Z"
+    }
+  }
+  ```
 
 ### `DELETE /user/messages/:id`
 
-- **Description:** Delete a message.
+- **Description:** Delete a specific message.
 - **Authentication:** Required (`authenticatePrivy`)
-- **Params:** `id` (string, uuid, required)
-- **Response:** Success message
+- **Params:** `id` (string, UUID format, required)
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "message": "Message deleted successfully",
+    "data": null
+  }
+  ```
+
+---
+
+## Test Endpoint
+
+### `POST /ai/test`
+
+- **Description:** Test AI functionality without authentication (for development and testing).
+- **Authentication:** None required (public endpoint)
+- **Request:**
+
+  ```json
+  {
+    "message": "string (required, min 1 char)",
+    "chatId": "string (optional, UUID format - for continuing conversations)"
+  }
+  ```
+
+  **Note:**
+
+  - Creates a test user automatically if not provided
+  - Supports continuing conversations by providing `chatId` from previous responses
+  - Same AI capabilities as authenticated endpoints
+  - Uses all available DeFi tools and multi-step reasoning
+
+- **Response (200 OK):**
+
+  ```json
+  {
+    "success": true,
+    "response": "AI assistant response with potential tool usage results",
+    "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1",
+    "metadata": {
+      "timestamp": "2025-08-02T12:00:00.000Z",
+      "processing_time": "2.45s",
+      "tools_used": ["token_prices", "gas_prices"]
+    }
+  }
+  ```
+
+- **Error Responses:**
+
+  ```json
+  // 400 Bad Request
+  {
+    "success": false,
+    "message": "Message is required"
+  }
+
+  // 500 Internal Server Error
+  {
+    "success": false,
+    "message": "AI processing failed",
+    "error": "error details"
+  }
+  ```
+
+- **Example Usage:**
+
+  ```bash
+  # Basic AI query
+  curl -X POST http://localhost:3000/ai/test \
+    -H "Content-Type: application/json" \
+    -d '{
+      "message": "What is the current price of ETH?"
+    }'
+
+  # Continue conversation
+  curl -X POST http://localhost:3000/ai/test \
+    -H "Content-Type: application/json" \
+    -d '{
+      "message": "Now get me a swap quote for 1 ETH to USDC",
+      "chatId": "c1a2b3d4-e5f6-7890-1234-56789abcdef1"
+    }'
+
+  # Complex multi-tool query
+  curl -X POST http://localhost:3000/ai/test 
+    -H "Content-Type: application/json" \
+    -d '{
+      "message": "Check gas prices on Ethereum, get the current ETH price, and calculate the cost to swap 1 ETH for USDC"
+    }'
+  ```
 
 ---
 
@@ -513,18 +859,53 @@ curl -X POST http://localhost:3000/user/messages \
     "chatId": "chat-uuid",
     "role": "user"
   }'
-```
 
+# Complex multi-step query with authenticated endpoint
 curl -X POST http://localhost:3000/user/messages \
- -H "Authorization: Bearer <your_privy_token>" \
- -H "Content-Type: application/json" \
- -d '{
-"content": "What would be the best rate to swap 100 USDC for DAI?",
-"chatId": "chat-uuid",
-"role": "user"
-}'
-
+  -H "Authorization: Bearer <your_privy_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Check my USDC balance, get current gas prices, then calculate the best swap rate for 100 USDC to DAI",
+    "chatId": "chat-uuid",
+    "role": "user"
+  }'
 ```
 
 ---
+
+## Response Format Standards
+
+All API responses follow a consistent format using the standardized response helpers:
+
+### Success Responses
+
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    /* response data */
+  }
+}
 ```
+
+### Error Responses
+
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "data": "Additional error details or validation messages"
+}
+```
+
+### HTTP Status Codes
+
+- **200 OK**: Successful GET, PUT, DELETE operations
+- **201 Created**: Successful POST operations (resource creation)
+- **400 Bad Request**: Validation errors, malformed requests
+- **401 Unauthorized**: Missing or invalid authentication
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Server-side processing errors
+
+---
