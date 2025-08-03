@@ -242,12 +242,12 @@ function formatTimestamp(timeMs: number): string {
 
 // Helper function to format transaction hash
 function formatTxHash(hash: string): string {
-  return `${hash.slice(0, 10)}...${hash.slice(-8)}`;
+  return hash; // Return full transaction hash
 }
 
 // Helper function to format address
 function formatAddress(address: string): string {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  return address; // Return full address without truncation
 }
 
 // Helper function to get chain name

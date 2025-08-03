@@ -1,5 +1,4 @@
 // Import all available AI tools
-import { oneInchSwapTool } from "./oneInchSwapTool";
 import { tokenInfoTool } from "./tokenInfoTool";
 import { nftTool } from "./nftTool";
 import { priceTool } from "./priceTool";
@@ -11,7 +10,6 @@ import { domainsTool } from "./domainsTool";
 
 // Export array of all tools for easy binding to the model
 export const availableTools = [
-  oneInchSwapTool,
   tokenInfoTool,
   nftTool,
   priceTool,
@@ -24,7 +22,6 @@ export const availableTools = [
 
 // Export individual tools for specific use
 export {
-  oneInchSwapTool,
   tokenInfoTool,
   nftTool,
   priceTool,
@@ -37,7 +34,6 @@ export {
 
 // Tool registry for dynamic tool execution
 export const toolRegistry = {
-  oneinch_fusion_swap: oneInchSwapTool.func,
   get_token_info: tokenInfoTool.func,
   nft_operations: nftTool.func,
   token_prices: priceTool.func,

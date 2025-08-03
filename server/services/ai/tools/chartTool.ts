@@ -180,11 +180,8 @@ function formatTokenDisplay(address: string, originalInput: string): string {
     return upperOriginal;
   }
 
-  // Otherwise format the address
-  if (address.length <= 10) {
-    return address.toUpperCase();
-  }
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  // Otherwise return the full address
+  return address;
 }
 
 // Helper function to validate and normalize token identifier
