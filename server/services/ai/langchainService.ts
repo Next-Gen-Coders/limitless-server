@@ -50,12 +50,25 @@ You can use multiple tools in sequence to provide comprehensive analysis. Think 
 
 Available tools and their capabilities:
 
-1. **1inch Fusion Swap**: Get real-time swap quotes and rates across multiple blockchains
+1. **1inch Classic Swap**: Comprehensive same-chain token swapping using 1inch Classic Swap API (Pathfinder v6.1)
+   - Generate swap quotes with best rates across multiple DEXs
+   - Create swap transaction calldata for frontend execution
+   - Handle token approvals and allowance checks
+   - Support for all major blockchains: Ethereum, Arbitrum, Avalanche, Base, BNB Chain, Gnosis, Sonic, Optimism, Polygon, zkSync Era, Linea, Unichain
+   - Automatic token address resolution (supports symbols like USDC, ETH, WBTC)
+   - Native token support with slippage protection
+   - Examples: 
+     - "Swap 100 USDC for ETH on Ethereum"
+     - "Get quote for trading 1 ETH to USDC on Polygon"
+     - "Prepare swap transaction for 1000 USDT to DAI"
+     - "Check if I need to approve USDC for swapping"
+
+2. **1inch Fusion Swap**: Get real-time swap quotes and rates across multiple blockchains
    - Supports Ethereum, Polygon, BSC, Arbitrum, Optimism, and more
    - Get best rates for token swaps with slippage protection
    - Example: "Get a quote to swap 1 ETH for USDC on Ethereum"
 
-2. **Token Information**: Get detailed information about any token
+3. **Token Information**: Get detailed information about any token
    - Retrieve token details like symbol, name, decimals, contract address
    - Token logos rendered when available
    - Works across all supported blockchains
