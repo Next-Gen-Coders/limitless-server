@@ -140,6 +140,8 @@ export const createMessageController: RequestHandler = async (req, res) => {
       message,
       userMessage: data.userMessage || data,
       aiMessage: data.aiMessage || null,
+      toolsUsed: data.toolsUsed || null,
+      chartData: data.chartData || null,
     });
   };
 
