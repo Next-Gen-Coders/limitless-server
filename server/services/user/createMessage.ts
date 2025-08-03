@@ -9,6 +9,7 @@ export interface CreateMessageResponse {
   aiMessage?: any;
   toolsUsed?: string[];
   chartData?: any;
+  swapData?: any;
   error?: string;
 }
 
@@ -76,6 +77,7 @@ export const createMessage = async (
             aiMessage,
             toolsUsed: aiResponse.toolsUsed,
             chartData: aiResponse.chartData,
+            swapData: aiResponse.swapData,
           },
           message: "Messages created successfully with AI response",
           error: null,

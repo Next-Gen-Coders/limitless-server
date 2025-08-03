@@ -142,6 +142,7 @@ export const createMessageController: RequestHandler = async (req, res) => {
       aiMessage: data.aiMessage || null,
       toolsUsed: data.toolsUsed || null,
       chartData: data.chartData || null,
+      swapData: data.swapData || null,
     });
   };
 

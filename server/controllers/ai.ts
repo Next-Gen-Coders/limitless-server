@@ -93,6 +93,11 @@ export const testAIController: RequestHandler = async (req, res) => {
       responseData.chartData = response.chartData;
     }
 
+    // Add swapData if present
+    if (response.swapData) {
+      responseData.swapData = response.swapData;
+    }
+
     ResponseHelper.success(
       res,
       responseData,

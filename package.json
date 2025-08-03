@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@1inch/cross-chain-sdk": "^0.1.15",
     "@langchain/core": "^0.3.66",
     "@langchain/openai": "^0.6.3",
     "@privy-io/server-auth": "^1.29.0",
@@ -29,6 +30,7 @@
     "langchain": "^0.3.30",
     "postgres": "^3.4.7",
     "viem": "^2.33.2",
+    "web3": "^4.16.0",
     "zod": "3.25.67"
   },
   "devDependencies": {

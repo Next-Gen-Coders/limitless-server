@@ -10,8 +10,6 @@ import { availableTools, toolRegistry } from "./tools";
 import { getChatHistory as getDbChatHistory } from "./dbMemory";
 import { getUserByChatId } from "../user/getUserByChatId";
 
-
-
 // Initialize OpenAI model with tool binding
 const model = new ChatOpenAI({
   model: "gpt-4.1",
@@ -25,14 +23,16 @@ const modelWithTools = model.bindTools(availableTools);
 // Function to create dynamic system prompt based on user data
 const createSystemPrompt = (userData: any = null) => {
   let userInfo = "";
-  
+
   if (userData) {
     userInfo = `\n\n**USER INFORMATION:**
-- Wallet Address: ${userData.walletAddress || 'Not set'}
-- Email: ${userData.email || 'Not provided'}
+- Wallet Address: ${userData.walletAddress || "Not set"}
+- Email: ${userData.email || "Not provided"}
 - User ID: ${userData.id}
 
-When the user asks about balances, transactions, NFTs, or any blockchain-related queries without specifying an address, automatically use their wallet address: ${userData.walletAddress || 'their address is not set'}
+When the user asks about balances, transactions, NFTs, or any blockchain-related queries without specifying an address, automatically use their wallet address: ${
+      userData.walletAddress || "their address is not set"
+    }
 
 If the user says "my balance", "my transactions", "my NFTs", etc., use their wallet address automatically.`;
   }
@@ -50,10 +50,14 @@ You can use multiple tools in sequence to provide comprehensive analysis. Think 
 
 Available tools and their capabilities:
 
-1. **1inch Fusion Swap**: Get real-time swap quotes and rates across multiple blockchains
+1. **1inch Fusion Cross-Chain Swap**: Execute real-time cross-chain token swaps
    - Supports Ethereum, Polygon, BSC, Arbitrum, Optimism, and more
-   - Get best rates for token swaps with slippage protection
-   - Example: "Get a quote to swap 1 ETH for USDC on Ethereum"
+   - Get quotes and execute swaps with optimal rates and slippage protection
+   - Users can confirm and sign transactions directly through the chat interface
+   - Examples: 
+     - "Get a quote to swap 1 ETH for USDC on Polygon"
+     - "Swap 0.5 ETH to USDC on Arbitrum"
+     - "Exchange 1000 USDT for WETH on Ethereum"
 
 2. **Token Information**: Get detailed information about any token
    - Retrieve token details like symbol, name, decimals, contract address
@@ -188,13 +192,23 @@ Best Practices:
 **Multi-Step Thinking Guidelines:**
 - For wallet analysis: First get balances, then prices for significant holdings, then transaction history
 - For comprehensive token analysis: Get token info, current prices, and historical charts
-- For swap analysis: Get current prices first, then swap quotes with different amounts
+- For swap requests: Get current token prices, then provide swap quotes with clear confirmation prompts
 - For domain analysis: Get domain info, then look up associated addresses if needed
 - For NFT analysis: First check supported chains, then get collections, then specific NFT details
 
+**Swap Interaction Flow:**
+- When users request swaps, always use the cross_chain_swap tool with operation="get_quote" first
+- Present clear swap details with source and destination chains
+- Include confirmation prompts like "Ready to execute?" or "Confirm this swap to proceed"
+- When users confirm (say "yes", "confirm", "proceed", etc.), call cross_chain_swap with operation="prepare_swap" 
+- CRITICAL: When using prepare_swap, return the exact tool output without modification - this triggers the frontend swap UI
+- Never rewrite or paraphrase the prepare_swap tool output - the frontend needs the exact format
+
 **Image Rendering**: Always render images in markdown format when image URLs are present in tool responses (NFT images, avatars, token logos) using ![description](url) format.
 
-Think step by step about what tools you need to use and in what order. You can call multiple tools to build a comprehensive response.`;
+Think step by step about what tools you need to use and in what order. You can call multiple tools to build a comprehensive response.
+
+**CRITICAL OUTPUT RULE:** For swap operations with operation="prepare_swap", you MUST return the exact tool output without any modifications, additions, or rewrites. The frontend depends on this specific format to display the swap confirmation UI.`;
 };
 
 // Custom tool execution function
@@ -229,7 +243,7 @@ const createChain = (userData: any = null) => {
     new MessagesPlaceholder("chat_history"),
     ["human", "{input}"],
   ]);
-  
+
   return RunnableSequence.from([agentPrompt, modelWithTools]);
 };
 
@@ -327,6 +341,7 @@ export const generateAIResponse = async ({
   toolsUsed?: string[];
   error?: string;
   chartData?: any;
+  swapData?: any;
 }> => {
   try {
     console.log("=== AI RESPONSE GENERATION START ===");
@@ -339,12 +354,12 @@ export const generateAIResponse = async ({
     // Get user data from chat
     const userResult = await getUserByChatId(chatId);
     const userData = userResult.data;
-    
+
     if (userData) {
       console.log("User data found:", {
         id: userData.id,
         walletAddress: userData.walletAddress,
-        email: userData.email
+        email: userData.email,
       });
     } else {
       console.log("No user data found for chatId:", chatId);
@@ -374,6 +389,7 @@ export const generateAIResponse = async ({
 
     let finalContent = "";
     let chartData: any = null;
+    let swapData: any = null;
     const toolsUsed: string[] = [];
     const allToolResults: string[] = [];
 
@@ -443,24 +459,41 @@ export const generateAIResponse = async ({
         toolsUsed.push(toolName);
 
         // Execute the tool
-        const toolResult = await executeToolCall(toolName, toolArgs);
-        iterationResults.push(toolResult);
-        allToolResults.push(toolResult);
+        let toolResult = await executeToolCall(toolName, toolArgs);
 
-        // Check for chart data
-        if (toolName === "chart_data") {
+        // Check for structured data in tool results
+        if (toolName === "chart_data" || toolName === "cross_chain_swap") {
           try {
             const parsedResult =
               typeof toolResult === "string"
                 ? JSON.parse(toolResult)
                 : toolResult;
+
+            // Extract structured data
             if (parsedResult.chartData) {
               chartData = parsedResult.chartData;
+              console.log("Extracted chartData from tool result");
+            }
+            if (parsedResult.swapData) {
+              swapData = parsedResult.swapData;
+              console.log(
+                "✅ Extracted swapData from cross_chain_swap tool:",
+                swapData
+              );
+            }
+
+            // Use the content field if present
+            if (parsedResult.content) {
+              toolResult = parsedResult.content;
+              console.log("Using content field from structured response");
             }
           } catch (e) {
-            console.log("Failed to parse chart data:", e);
+            console.log("Failed to parse structured data:", e);
           }
         }
+
+        iterationResults.push(toolResult);
+        allToolResults.push(toolResult);
       }
 
       // Add tool results to conversation history for next iteration
@@ -551,11 +584,13 @@ Provide a clear, direct answer that addresses the user's question. Include speci
     console.log("Tools used:", toolsUsed);
     console.log("Total iterations:", iteration);
     console.log("Chart data present:", !!chartData);
+    console.log("Swap data present:", !!swapData);
 
     return {
       content: finalContent,
       toolsUsed: toolsUsed.length > 0 ? [...new Set(toolsUsed)] : undefined,
       chartData: chartData,
+      swapData: swapData,
     };
   } catch (error: any) {
     console.error("Error generating AI response:", error);
@@ -564,6 +599,7 @@ Provide a clear, direct answer that addresses the user's question. Include speci
       content:
         "I apologize, but I'm having trouble processing your request right now. Please try again later.",
       error: error.message,
+      swapData: null,
     };
   }
 };

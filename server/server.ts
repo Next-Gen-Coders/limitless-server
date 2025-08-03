@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 import routes from "./routes/service";
 import userRoutes from "./routes/user";
 import adminRoutes from "./routes/admin";
-import aiRoutes from "./routes/ai";
+import swapRoutes from "./routes/swap";
 dotenv.config();
 
 const app = express();
@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", routes);
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
-app.use("/ai", aiRoutes);
+app.use("/swap", swapRoutes);
 
 // Basic route
 app.get("/", (req: Request, res: Response) => {
