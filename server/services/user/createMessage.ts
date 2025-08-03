@@ -1,13 +1,14 @@
 import { db } from "../../db";
 import { messages } from "../../db/schema";
-import { eq } from "drizzle-orm";
 import { AddMessageRequest } from "../../zod";
 import { randomUUID } from "crypto";
-import { generateAIResponse, getChatHistory } from "../ai/langchainService";
+import { generateAIResponse } from "../ai/langchainService";
 
 export interface CreateMessageResponse {
   userMessage: any;
   aiMessage?: any;
+  toolsUsed?: string[];
+  chartData?: any;
   error?: string;
 }
 
@@ -37,20 +38,11 @@ export const createMessage = async (
     // If the message is from a user, generate an AI response
     if (data.role === "user") {
       try {
-        // Get chat history for context
-        const chatHistory = await getChatHistory(data.chatId);
-
-        // Add the current user message to history
-        chatHistory.push({
-          role: "user",
-          content: data.content,
-        });
-
-        // Generate AI response
+        // Generate AI response using database memory
         const aiResponse = await generateAIResponse({
-          messages: chatHistory,
-          userId: data.userId,
           chatId: data.chatId,
+          userMessage: data.content,
+          userId: data.userId,
         });
 
         if (aiResponse.error) {
@@ -82,6 +74,8 @@ export const createMessage = async (
           data: {
             userMessage,
             aiMessage,
+            toolsUsed: aiResponse.toolsUsed,
+            chartData: aiResponse.chartData,
           },
           message: "Messages created successfully with AI response",
           error: null,
