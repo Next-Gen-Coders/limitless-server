@@ -60,14 +60,13 @@ const SYSTEM_PROMPT = `You are a helpful AI assistant for the Limitless platform
 
 6. **Transaction History**: Get comprehensive transaction history and analysis
    - Complete transaction history for any wallet address
-   - Advanced search with multiple filter options
-   - Swap-specific transaction history
+   - Advanced search with transaction hash and time filtering
    - Multi-chain support with detailed transaction metadata
    - Examples:
      - "Show me recent transaction history for wallet 0x742d35Cc6634C0532925a3b8D5C9E5E0d96B8C79"
-     - "Get all swap transactions on Ethereum for this wallet"
-     - "Search for transactions involving USDC in the last 30 days"
-     - "Show me all 1inch Fusion swaps for this address"
+     - "Get transaction history on Ethereum for this wallet"
+     - "Search for a specific transaction hash in the last 30 days"
+     - "Show me all transactions involving USDC token"
 
 7. **NFT Operations**: Comprehensive NFT information and management
    - Get supported chains for NFT API
