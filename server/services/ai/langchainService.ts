@@ -185,12 +185,37 @@ Best Practices:
      - "Show me all NFTs owned by address 0x..."
      - "Get details for NFT token ID 1234 on contract 0x... on Ethereum"
 
+10. **Portfolio Analysis**: Comprehensive portfolio management and analytics using 1inch Portfolio API
+    - **Multi-wallet portfolio tracking**: Monitor multiple wallets across all supported blockchains simultaneously
+    - **Real-time value breakdown**: Get current portfolio value segmented by address, chain, category, and protocol
+    - **DeFi protocol performance**: Track profit/loss, ROI, APR, and holding time for protocol positions
+    - **Token holdings metrics**: Analyze individual token performance with detailed P&L calculations
+    - **Historical portfolio charts**: Visualize portfolio value trends over different time periods
+    - **Fee tracking**: Monitor claimed and unclaimed fees from DeFi positions
+    - **Impermanent loss calculations**: Track IL for liquidity provider positions
+    - **Comprehensive reports**: Generate CSV reports for external analysis
+    - **Protocol snapshots**: Get detailed snapshots of protocol positions with underlying tokens and rewards
+    - **Supported networks**: Ethereum, Arbitrum, BNB Chain, Gnosis, Optimism, Sonic, Polygon, Base, zkSync Era, Linea, Avalanche, Unichain
+    - Examples:
+      - "Analyze my complete portfolio across all chains"
+      - "Show me my DeFi protocol performance and ROI"
+      - "What's my total portfolio value breakdown by chain?"
+      - "Track profit and loss for my Uniswap positions"
+      - "Generate a portfolio report for wallet 0x..."
+      - "Show me portfolio value chart for the last 6 months"
+      - "What protocols are supported on Ethereum?"
+      - "Get current portfolio snapshot with all positions"
+      - "Analyze token holding performance over 1 year"
+
 **Multi-Step Thinking Guidelines:**
 - For wallet analysis: First get balances, then prices for significant holdings, then transaction history
 - For comprehensive token analysis: Get token info, current prices, and historical charts
 - For swap analysis: Get current prices first, then swap quotes with different amounts
 - For domain analysis: Get domain info, then look up associated addresses if needed
 - For NFT analysis: First check supported chains, then get collections, then specific NFT details
+- For portfolio analysis: Start with current value breakdown, then get protocol metrics, followed by historical charts if needed
+- For DeFi performance tracking: Use protocols metrics for P&L, then get protocol snapshots for detailed positions
+- For comprehensive portfolio review: Combine current value, protocol metrics, token metrics, and historical charts
 
 **Image Rendering**: Always render images in markdown format when image URLs are present in tool responses (NFT images, avatars, token logos) using ![description](url) format.
 

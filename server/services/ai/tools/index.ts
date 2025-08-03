@@ -7,6 +7,7 @@ import { balanceTool } from "./balanceTool";
 import { historyTool } from "./historyTool";
 import { chartTool } from "./chartTool";
 import { domainsTool } from "./domainsTool";
+import { portfolioTool } from "./portfolioTool";
 
 // Export array of all tools for easy binding to the model
 export const availableTools = [
@@ -18,6 +19,7 @@ export const availableTools = [
   historyTool,
   chartTool,
   domainsTool,
+  portfolioTool,
 ];
 
 // Export individual tools for specific use
@@ -30,6 +32,7 @@ export {
   historyTool,
   chartTool,
   domainsTool,
+  portfolioTool,
 };
 
 // Tool registry for dynamic tool execution
@@ -42,6 +45,7 @@ export const toolRegistry = {
   transaction_history: historyTool.func,
   chart_data: chartTool.func,
   domain_operations: domainsTool.func,
+  portfolio_analysis: portfolioTool.func,
 } as const;
 
 export type ToolName = keyof typeof toolRegistry;
